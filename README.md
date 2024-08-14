@@ -50,7 +50,7 @@ The Movie Listing API is a FastAPI-based application that allows users to list m
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/your-username/movie-listing-api.git
+   git clone https://github.com/fajos/movie-listing-api.git
    cd movie-listing-api
    ```
 
