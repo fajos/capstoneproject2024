@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Float
 from sqlalchemy.orm import relationship, backref
-from .database import Base
+from app.database import Base
 
 class User(Base):
     __tablename__ = 'users'
@@ -19,9 +19,10 @@ class Movie(Base):
     title = Column(String, index=True)
     description = Column(String, index=True)
     owner_id = Column(Integer, ForeignKey('users.id'))
+   
     owner = relationship("User", back_populates="movies")
-    ratings = relationship("Rating", back_populates="movie")
-    comments = relationship("Comment", back_populates="movie")
+    ratings = relationship("Rating", back_populates="movie", cascade="all, delete-orphan")
+    comments = relationship("Comment", back_populates="movie", cascade="all, delete-orphan")
 
 class Rating(Base):
     __tablename__ = 'ratings'
@@ -43,4 +44,4 @@ class Comment(Base):
     parent_id = Column(Integer, ForeignKey('comments.id'), nullable=True)
     movie = relationship("Movie", back_populates="comments")
     user = relationship("User", back_populates="comments")
-    replies = relationship("Comment", backref=backref("parent", remote_side=[id]))
+    replies = relationship("Comment", cascade="all, delete-orphan", backref=backref('parent', remote_side=[id]))
