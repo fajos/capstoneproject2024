@@ -1,13 +1,11 @@
 import os
 from dotenv import load_dotenv
+from sqlalchemy import create_engine, pool
+from logging.config import fileConfig
+from alembic import context
 
 # Load environment variables from .env file
 load_dotenv()
-
-from logging.config import fileConfig
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-from alembic import context
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -22,7 +20,7 @@ from app.models import Base  # Import your SQLAlchemy models
 target_metadata = Base.metadata
 
 # Ensure DATABASE_URL is set, otherwise raise an error
-database_url = os.getenv('DATABASE_URL')
+database_url = os.getenv("DATABASE_URL")
 if not database_url:
     raise RuntimeError("DATABASE_URL environment variable is not set.")
 
@@ -40,20 +38,18 @@ def run_migrations_offline():
         context.run_migrations()
 
 def run_migrations_online():
-    """Run migrations in 'online' mode."""
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
+    connectable = create_engine(
+        config.get_main_option("sqlalchemy.url"),
+        connect_args={"check_same_thread": False}
     )
 
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
+        context.configure(
+            connection=connection,
+            target_metadata=target_metadata
+        )
 
         with context.begin_transaction():
             context.run_migrations()
 
-if context.is_offline_mode():
-    run_migrations_offline()
-else:
-    run_migrations_online()
+run_migrations_online()
