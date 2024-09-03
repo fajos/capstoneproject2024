@@ -1,6 +1,12 @@
 import logging
 from fastapi import FastAPI
 from app.routers import users, auth, movies, ratings, comments
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
